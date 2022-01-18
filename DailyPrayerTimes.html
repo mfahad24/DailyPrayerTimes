@@ -1,0 +1,173 @@
+<!-- remove 4 lines below - not needed for joomla -->
+
+<head>
+    <title>Daily Prayer Times</title>
+    <!-- <img src="https://ionastorageaccount.blob.core.windows.net/$web/HeaderImages/Iona_GalaxyHeader.jpg.jpg"/> -->
+</head>
+
+<body>
+    <table style="width: 290px; height: 159px; margin-left: auto; margin-right: auto;">
+        <tbody>
+            <tr>
+                <th style="text-align: left;"><span style="font-size: 10pt;">Prayer</span></th>
+                <th><span style="font-size: 10pt;">Adhan</span></th>
+                <th><span style="font-size: 10pt;">Iqamah</span></th>
+            </tr>
+            <tr>
+                <td><span style="font-size: 10pt;">Fajr</span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Fajr"></span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Fajr-Iqamah"></span></td>
+            </tr>
+            <tr>
+                <td><span style="font-size: 10pt;">Zuhr</span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Zuhr"></span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Zuhr-Iqamah"></span></td>
+            </tr>
+            <tr>
+                <td><span style="font-size: 10pt;">Asr Shafi</span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="AsrShafi"></span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Asr-Shafi-Iqamah"></span></td>
+            </tr>
+            <tr>
+                <td><span style="font-size: 10pt;">Asr Hanafi</span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="AsrHanafi"></span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Asr-Hanafi-Iqamah"></span></td>
+            </tr>
+            <tr>
+                <td><span style="font-size: 10pt;">Maghrib&nbsp; </span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Maghrib"></span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Maghrib-Iqamah"></span></td>
+            </tr>
+            <tr>
+                <td><span style="font-size: 10pt;">Isha</span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Isha"></span></td>
+                <td style="text-align: center;"><span style="font-size: 10pt;" id="Isha-Iqamah"></span></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- remove this below for joomla - dont need -->
+</body>
+
+<script type="text/javascript">
+    // IMPORTANT - if it is not Ramadan, comment out Ramadan JSON from 'Sheet1' line
+    // to ending "]" tag
+    // logic will then apply daily prayer times
+
+    // takes date in this format - 'Date Fri Oct 08 2021 22:26:42 GMT-0400 (Eastern Daylight Time)'
+    // and returns day number in the year
+    function getDayNumberOfYear(date) {
+        return Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+    }
+
+    //converts military time to standard time and adds AM/PM to end
+    function toStandardTime(militaryTime) {
+        var time = militaryTime.split(':'); // convert to array
+
+        // fetch
+        var hours = Number(time[0]);
+        var minutes = Number(time[1]);
+        var seconds = Number(time[2]);
+
+        // calculate
+        var timeValue;
+
+        if (hours > 0 && hours <= 12) {
+            timeValue = "" + hours;
+        } else if (hours > 12) {
+            timeValue = "" + (hours - 12);
+        } else if (hours == 0) {
+            timeValue = "12";
+        }
+
+        timeValue += (minutes < 10) ? ":0" + minutes : ":" + minutes; // get minutes
+        timeValue += (hours >= 12) ? " PM" : " AM"; // get AM/PM
+
+        return timeValue;
+    }
+
+    // doing a seperate function for this inner html replacements so we do not repeat code
+    function renderDailyOrRamadanPrayerTimes(singleDay) {
+        console.log('hit');
+        // slice removes 'a1/p1' at the end - output from google sheets for some reason
+        //Fajr
+        document.getElementById('Fajr').innerHTML = toStandardTime((singleDay.Fajr.slice(0, 5)));
+        document.getElementById('Fajr-Iqamah').innerHTML = toStandardTime((singleDay.FajrIqamah.slice(0, 5)));
+
+        //Zuhr
+        document.getElementById('Zuhr').innerHTML = toStandardTime((singleDay.Zuhr.slice(0, 5)));
+        document.getElementById('Zuhr-Iqamah').innerHTML = toStandardTime((singleDay.ZuhrIqamah.slice(0, 5)));
+
+        //Asr Shafi
+        document.getElementById('AsrShafi').innerHTML = toStandardTime((singleDay.AsrShafi.slice(0, 5)));
+        document.getElementById('Asr-Shafi-Iqamah').innerHTML = toStandardTime((singleDay.AsrShafiIqamah.slice(0, 5)));
+
+        //Asr Hanafi
+        document.getElementById('AsrHanafi').innerHTML = toStandardTime((singleDay.AsrHanafi.slice(0, 5)));
+        document.getElementById('Asr-Hanafi-Iqamah').innerHTML = toStandardTime((singleDay.AsrHanafiIqamah.slice(0, 5)));
+
+        //Maghrib
+        document.getElementById('Maghrib').innerHTML = toStandardTime((singleDay.Maghrib.slice(0, 5)));
+        document.getElementById('Maghrib-Iqamah').innerHTML = toStandardTime((singleDay.MaghribIqamah.slice(0, 5)));
+
+        //Isha
+        document.getElementById('Isha').innerHTML = toStandardTime((singleDay.Isha.slice(0, 5)));
+        document.getElementById('Isha-Iqamah').innerHTML = toStandardTime((singleDay.IshaIqamah.slice(0, 5)));
+    }
+
+    // doing a seperate function for this map code so we do not repeat code
+
+    // before the map - we are fetching the JSON from jsonbin.io
+    // reason for this - unable to save JSON with all this code in joomla modules (too big)
+
+    // TO DO - we need to simplify this code
+    function mapThroughDailyOrRamadanJSON(prayerTimesJSON) {
+        var url;
+        // daily prayer json url
+        var url = 'https://api.jsonbin.io/b/616b85884a82881d6c613a98';
+        if (prayerTimesJSON === 'DailyPrayerTimes') {
+            url = 'https://api.jsonbin.io/b/616b85884a82881d6c613a98';
+            var Http = new XMLHttpRequest();
+            Http.open("GET", url);
+            Http.send();
+
+            Http.onreadystatechange = (e) => {
+                var parsedJSON = JSON.parse(Http.responseText);
+                // NOTE - if prayer times are not outputting, individually log
+                // each item in if statement to make sure they are equal
+                parsedJSON.Sheet1.map(function (singleDay) {
+                    if (getDayNumberOfYear(new Date) == singleDay.DayNumberOfYear) {
+                        renderDailyOrRamadanPrayerTimes(singleDay)
+                    }
+                })
+            }
+        } else if (prayerTimesJSON === 'RamadanPrayerTimes') {
+            //ramadan json url
+            url = 'https://api.jsonbin.io/b/61738b629548541c29c7400b';
+            var Http = new XMLHttpRequest();
+            Http.open("GET", url);
+            Http.send();
+
+            Http.onreadystatechange = (e) => {
+                var parsedJSON = JSON.parse(Http.responseText);
+                // NOTE - if prayer times are not outputting, individually log
+                // each item in if statement to make sure they are equal
+                parsedJSON.Sheet1.map(function (singleDay) {
+                    if (getDayNumberOfYear(new Date) == singleDay.DayNumberOfYear) {
+                        renderDailyOrRamadanPrayerTimes(singleDay)
+                    }
+                })
+            }
+        }
+    }
+
+    // VERY VERY IMPORTANT - THIS IS KEY. this variable below tells us which prayer
+    // time we want to show
+    var showDailyPrayerTimes = true;
+
+    // continuing from above ... just make line '!showDailyPrayerTimes' to get Ramadan times
+    if (showDailyPrayerTimes) {
+        mapThroughDailyOrRamadanJSON('DailyPrayerTimes');
+    } else {
+        mapThroughDailyOrRamadanJSON('RamadanPrayerTimes');
+    }
+</script>
